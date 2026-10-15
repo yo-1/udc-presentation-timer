@@ -1,6 +1,6 @@
-# UDC Presentation Timer / UDCタイマー Ver.3
+# UDCタイマー / プレゼンタイマー Ver.3
 
-UDC向けの学会・発表用タイマーです。Windows、ブラウザ、iPad（PWA）の3種類を同一仕様で提供します。
+ブラウザ版・iPad（PWA）版はUDC向けの「UDCタイマー」、Windows版は汎用の「プレゼンタイマー」です。同じリポジトリで管理しますが、画面デザインは異なります。
 
 ## 主な機能
 
@@ -15,7 +15,7 @@ UDC向けの学会・発表用タイマーです。Windows、ブラウザ、iPad
 - 経過時間・残り時間表示
 - 設定保存
 - フルスクリーン表示
-- UDCロゴ・UDCカラー
+- UDCロゴ・UDCカラー（ブラウザ版・PWA版）
 
 ## 構成
 
@@ -25,11 +25,15 @@ UDC向けの学会・発表用タイマーです。Windows、ブラウザ、iPad
 - `assets/` : ロゴ、ベル画像、ベル音
 - `tests/` : 構造確認用テスト
 
-## Windows版
+## Windows版：プレゼンタイマー Ver.3
 
-`windows/udc_timer.py` をPythonで起動できます。
+`windows/udc_timer.py` をPythonで起動できます。EXE化する場合は `windows/build_exe.bat` を実行します。
 
-EXE化する場合は `windows/build_exe.bat` を実行します。
+生成ファイル名：`PresentationTimer.exe`。GitHub Actions成果物名：`PresentationTimer_Windows`。
+
+Windows版にはUDCロゴを使用しません。既存の設定を引き継ぐため、設定保存先の旧フォルダ名は変更していません。
+
+**安全性確認中：** Windows EXEはSmartScreen警告およびウイルスバスターの検出報告があるため、原因調査が終わるまで正式配布を保留しています。セキュリティ製品の除外登録や警告の無視は推奨しません。
 
 ## ブラウザ版
 
