@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""UDCタイマー Ver.3 Python版（Windows向け）
+"""プレゼンタイマー Ver.3 Python版（Windows向け）
 - ベル1〜4（ベル4は8回）
 - 各ベル ON/OFF スイッチ
 - 0分0秒のベルも開始直後に鳴動
@@ -15,9 +15,10 @@ import time
 import tkinter as tk
 from tkinter import ttk
 
-APP = "UDCタイマー"
+APP = "プレゼンタイマー"
 BASE = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
 MP3 = os.path.join(BASE, "assets", "bell.mp3")
+# 既存のWindows版設定を引き継ぐため、保存先は旧名称を維持する。
 CFG = os.path.join(os.getenv("APPDATA", os.path.expanduser("~")), "UDCタイマー", "settings.json")
 os.makedirs(os.path.dirname(CFG), exist_ok=True)
 
