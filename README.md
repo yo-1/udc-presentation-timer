@@ -51,6 +51,22 @@ Windows用の実行ファイル（`PresentationTimer.exe`）です。**Pythonの
 - 設定保存、フルスクリーン表示
 - UDCロゴ・UDCカラー（ブラウザ版・PWA版）
 
+## フォークして自分たちのタイマーを作る
+
+**地域のUDC活動拠点、別の学会、イベント向けのタイマーに改造できます。** プログラムは **GNU GPL v3.0 only（GPL-3.0-only）** で公開しています。
+
+1. GitHub画面右上の **Fork** で、自分のアカウントにコピーします。
+2. タイマーの名前・配色・発表時間・ベル設定などを変更します。
+3. 自分のGitHub Pagesで公開し、地域や学会の仲間と共有できます。
+4. 汎用的な改良はIssueやPull Requestで元のプロジェクトに還元できます。
+
+- **[改造手順・公開方法：CUSTOMIZE.md](CUSTOMIZE.md)**
+- **[共同開発・不具合報告：CONTRIBUTING.md](CONTRIBUTING.md)**
+- **[プログラムのライセンス：LICENSE](LICENSE)**
+- **[ロゴ・画像・音声の扱い：ASSETS_LICENSE.md](ASSETS_LICENSE.md)**
+
+**重要：** GPL-3.0-onlyが適用されるのはプログラム本体です。UDCロゴ、ベル画像・音声、PWAアイコンはGPLの対象外です。派生版を配布する場合は、利用権限のある素材への差し替えを推奨します。GPLに従うソース公開等の義務も確認してください。
+
 ## 開発者向け：ソースコードの構成
 
 ここからは改修・ビルドを行う方向けの説明です。通常の利用者は読む必要はありません。
@@ -67,4 +83,4 @@ Windows用の実行ファイル（`PresentationTimer.exe`）です。**Pythonの
 
 ## 素材・配布上の注意
 
-UDCロゴ・画像・音声素材の再配布条件については、権利関係を確認してください。
+プログラム本体は [GPL-3.0-only](LICENSE) です。UDCロゴ・画像・音声素材はGPL対象外です。詳細は [ASSETS_LICENSE.md](ASSETS_LICENSE.md) を確認してください。
