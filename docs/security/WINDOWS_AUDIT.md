@@ -64,6 +64,36 @@ Requires-Python、選択wheelのSHA-256、取得時のvulnerabilitiesを記録�
 PyPIが返した該当版のvulnerabilitiesは全件空だったが、未知の脆弱性や別DBの見落としを否定しない。
 インストール済み旧依存と新ロックは区別して比較する。
 
+## 今回の検証結果と取得制限
+
+改善コミット `b09ca6ab3357e0bef17b42e2341e3d906efa3a1e` の
+[Windows CI 38955554555](https://github.com/yo-1/udc-presentation-timer/actions/runs/38955554555)
+はonefile・onedirともsuccess。両ジョブでインストール、pip check、テスト、ビルド、
+全ファイルinventoryの作成・照合とアップロードが成功した。両check-runのannotationsは空で、
+旧実行にあったNode.js 20警告はこの実行では記録されていない。
+Linuxではinventoryの6テストが全件成功（skipなし）、既存の構造assertionも成功。
+Windowsログ本文をまだ取得できないため、Windows側の個別テスト件数・skip数は未確認。
+
+| 新成果物 | ZIPバイト数 | APIに記録されたZIP SHA-256 |
+| --- | ---: | --- |
+| Comparison_onefile | 11532326 | `c938675353a239c6d960fabb2c48b2d475c419dc59e10043fc032e80ee36506e` |
+| Comparison_onedir | 12026034 | `dbf1d80e0ad51d16eb55cfd5084aec939253b77493cf32fbda549d28bb04b43d` |
+| Metadata_onefile | 53746 | `e5b828462895e17da286592b4a0eceee609124654cab433e5476bebea9820d6f` |
+| Metadata_onedir | 126432 | `b75b324dfe0cc9b7248d9064892016d6382a63fa6a081cfca3c32af40575d63a` |
+
+上記はAPIの記録確認であり、ダウンロードしたZIPの実測照合とは区別する。
+旧比較runのアーカイブ取得はリダイレクト先`productionresultssa15.blob.core.windows.net`、
+ログ取得は`results-receiver.actions.githubusercontent.com`への接続が403で止まった。
+GitHubの成功ステータスだけで、ログ本文・旧依存一覧・EXE個別ハッシュ・内包ファイルを確認したとは記さない。
+旧新の同梱物・依存の実物比較、旧EXEとのSHA-1/SHA-256照合、AV検査は未完了。
+APIで確認できるZIPサイズは上表と旧run表のとおりだが、ランタイムと依存も変わっているため、方式だけの影響は推定しない。
+
+GitHub API、成果物・ログ保存先、Microsoft/PyInstaller/Trend Micro公式資料のための
+接続先を環境設定のネットワークドラフトへ追加保存した。ドラフト保存は実行環境への反映・公開ではない。
+Trend Micro公式ページとPyInstaller公式サイトの閲覧も403で完了していない。
+接続設定の反映後に失敗した取得を再実行し、表の実測照合と残課題を更新する。
+新しい認証情報を追加する必要性は確認されていない。
+
 ## 検出原因と配布判定
 
 `ATC25475`を特定のマルウェア名・挙動・PyInstaller誤検知へ結び付ける公式根拠は得られていない。
