@@ -1,20 +1,51 @@
-name: Presentation Timer Windows build
+name: Presentation Timer Windows security comparison
 on:
   workflow_dispatch:
   push:
     tags: ["v*"]
+
+permissions:
+  contents: read
+
 jobs:
   exe:
-    runs-on: windows-latest
+    runs-on: windows-2022
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [onefile, onedir]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install -r windows/requirements-build.txt
-      - shell: pwsh
-        run: pyinstaller --noconfirm --onefile --windowed --name PresentationTimer --add-data "assets/bell.mp3;assets" windows/udc_timer.py
-      - uses: actions/upload-artifact@v4
+      - name: Record build environment
+        shell: pwsh
+        run: |
+          python --version
+          python -m pip --version
+          python -m pip install -r windows/requirements-build.txt
+          python -m pip freeze | Tee-Object -FilePath build-dependencies-${{ matrix.mode }}.txt
+      - name: Build comparison artifact
+        shell: pwsh
+        run: |
+          python -m PyInstaller --noconfirm --clean --${{ matrix.mode }} --windowed --name PresentationTimer --add-data "assets/bell.mp3;assets" windows/udc_timer.py
+      - name: Record hashes
+        shell: pwsh
+        run: |
+          Get-ChildItem dist -Recurse -File | ForEach-Object {
+            "$( (Get-FileHash -Algorithm SHA256 $_.FullName).Hash )  $( $_.FullName.Substring((Get-Location).Path.Length + 1) )"
+          } | Set-Content -Encoding utf8 hashes-${{ matrix.mode }}.txt
+      - name: Upload metadata
+        uses: actions/upload-artifact@v4
         with:
-          name: PresentationTimer_Windows
-          path: dist/PresentationTimer.exe
+          name: PresentationTimer_Metadata_${{ matrix.mode }}
+          path: |
+            build-dependencies-${{ matrix.mode }}.txt
+            hashes-${{ matrix.mode }}.txt
+      - name: Upload comparison build
+        uses: actions/upload-artifact@v4
+        with:
+          name: PresentationTimer_Comparison_${{ matrix.mode }}
+          path: dist/
+          retention-days: 7
