@@ -1,0 +1,272 @@
+{
+  "schema": 1,
+  "date_jst": "2026-10-17",
+  "method": "Static parsing only; candidate executables and DLLs never run",
+  "detected_file_hash_unverified_algorithm": "967de53ae24e8522a6a66b6f418be50bce325d2d",
+  "runs": {
+    "38953010619": {
+      "schema": 1,
+      "method": "static parsing; bundled code never executed",
+      "onefile": {
+        "bytes": 11514780,
+        "sha256": "b50e329c8acf0b66b3b854d6677973a3711732f994b31a10d575bc317f8ee7bd",
+        "sha1_identification_only": "5252802a2cd4811b094779a47d57a6063b7719a5",
+        "machine": "0x8664",
+        "pe_timestamp": 1792177899,
+        "subsystem": 2,
+        "certificate_table_bytes": 0,
+        "imports": [
+          "USER32.dll",
+          "COMCTL32.dll",
+          "KERNEL32.dll",
+          "ADVAPI32.dll",
+          "GDI32.dll"
+        ]
+      },
+      "onedir": {
+        "bytes": 1821680,
+        "sha256": "b3a8303a212782b7da79b58eed28148e556417268de510bb8cb7973ca6d85cdb",
+        "sha1_identification_only": "7b4881a4e0d629b257db249b6f910f6c49730fb6",
+        "machine": "0x8664",
+        "pe_timestamp": 1792177896,
+        "subsystem": 2,
+        "certificate_table_bytes": 0,
+        "imports": [
+          "USER32.dll",
+          "COMCTL32.dll",
+          "KERNEL32.dll",
+          "ADVAPI32.dll",
+          "GDI32.dll"
+        ]
+      },
+      "comparison": {
+        "external_count": 987,
+        "external_byte_identical": 986,
+        "external_different": [
+          "base_library.zip"
+        ],
+        "external_missing_from_onefile": [],
+        "unexpected_onefile_entries": [],
+        "embedded_compared": 10,
+        "embedded_missing_from_onefile": [],
+        "embedded_different": [],
+        "zip_details": {
+          "base_library.zip": {
+            "left_entries": 155,
+            "right_entries": 155,
+            "only_left": [],
+            "only_right": [],
+            "different_member_bytes": [],
+            "different_metadata": [],
+            "entry_order_equal": false
+          }
+        }
+      },
+      "artifacts": [
+        {
+          "name": "PresentationTimer_Metadata_onefile",
+          "id": 12069800165,
+          "size_in_bytes": 583,
+          "digest": "sha256:cb53a4b714c0a7554dae4cf75c58520dbed95e3b11490993322840d4e55a4702"
+        },
+        {
+          "name": "PresentationTimer_Comparison_onefile",
+          "id": 12069213434,
+          "size_in_bytes": 11248830,
+          "digest": "sha256:59a7762149c018eac53dd43dfe75cfac7754fed54b46f44bc85f2694b3cd5d43"
+        },
+        {
+          "name": "PresentationTimer_Comparison_onedir",
+          "id": 12069083939,
+          "size_in_bytes": 11804106,
+          "digest": "sha256:d198e56b59613d068083af2c681e84be934c65a60df33f922ba408992a528628"
+        },
+        {
+          "name": "PresentationTimer_Metadata_onedir",
+          "id": 12068729960,
+          "size_in_bytes": 45955,
+          "digest": "sha256:ebeebc83719d4972a306c846a0dd30d1ba1c4f7a960ef9c05b7a6018ad8bcb72"
+        }
+      ],
+      "archive_digests_verified": true,
+      "payload_manifest_verified": true,
+      "onedir_file_count": 988,
+      "all_59_dll_pyd_pairs_byte_identical": true,
+      "ambient_runner_packages_present_in_pyz": [],
+      "python": "3.12.10",
+      "build_dependencies": [
+        "altgraph==0.17.5",
+        "argcomplete==3.7.2",
+        "click==8.5.0",
+        "colorama==0.4.6",
+        "filelock==4.1.1",
+        "packaging==26.3",
+        "pefile==2024.8.26",
+        "pipx==1.17.14",
+        "platformdirs==4.13.0",
+        "pyinstaller==6.22.3",
+        "pyinstaller-hooks-contrib==2026.8",
+        "pywin32-ctypes==0.2.3",
+        "setuptools==84.0.0",
+        "userpath==1.9.2"
+      ],
+      "pyz_module_count": 112
+    },
+    "38955830019": {
+      "schema": 1,
+      "method": "static parsing; bundled code never executed",
+      "onefile": {
+        "bytes": 11780175,
+        "sha256": "05b8bdab8428f161c74d12f82d902873b28e7b4b2724229ed767d10ffd8e59fc",
+        "sha1_identification_only": "c207bcdc3ee2d5c1920822ed3eae663bc8109cad",
+        "machine": "0x8664",
+        "pe_timestamp": 1792179270,
+        "subsystem": 2,
+        "certificate_table_bytes": 0,
+        "imports": [
+          "USER32.dll",
+          "COMCTL32.dll",
+          "KERNEL32.dll",
+          "ADVAPI32.dll",
+          "GDI32.dll"
+        ]
+      },
+      "onedir": {
+        "bytes": 1929239,
+        "sha256": "bcfc26e228e7eb814ed9c7746f73aed68d6f32426311ac40aaa31da157b1abe5",
+        "sha1_identification_only": "18ea923c80edf855e54d7bc3c13e2aeb5e2c68bf",
+        "machine": "0x8664",
+        "pe_timestamp": 1792179259,
+        "subsystem": 2,
+        "certificate_table_bytes": 0,
+        "imports": [
+          "USER32.dll",
+          "COMCTL32.dll",
+          "KERNEL32.dll",
+          "ADVAPI32.dll",
+          "GDI32.dll"
+        ]
+      },
+      "comparison": {
+        "external_count": 987,
+        "external_byte_identical": 986,
+        "external_different": [
+          "base_library.zip"
+        ],
+        "external_missing_from_onefile": [],
+        "unexpected_onefile_entries": [],
+        "embedded_compared": 10,
+        "embedded_missing_from_onefile": [],
+        "embedded_different": [],
+        "zip_details": {
+          "base_library.zip": {
+            "left_entries": 154,
+            "right_entries": 154,
+            "only_left": [],
+            "only_right": [],
+            "different_member_bytes": [],
+            "different_metadata": [],
+            "entry_order_equal": false
+          }
+        }
+      },
+      "artifacts": [
+        {
+          "name": "PresentationTimer_Metadata_onefile",
+          "id": 12070816914,
+          "size_in_bytes": 53750,
+          "digest": "sha256:1fcfa523e5d17dd094c25ac745a9ddb15f372b67fa39cfd6a7bbff525e44295b"
+        },
+        {
+          "name": "PresentationTimer_Metadata_onedir",
+          "id": 12070233945,
+          "size_in_bytes": 126436,
+          "digest": "sha256:eca97f768934f0b340d93fec1ecaab4799dadfbe3b9eb39c95796042367cb17d"
+        },
+        {
+          "name": "PresentationTimer_Comparison_onefile",
+          "id": 12070009251,
+          "size_in_bytes": 11531679,
+          "digest": "sha256:9a801a201a2382760de986708adfa1e2a1a72235d450ef247c44681d77ecc8c4"
+        },
+        {
+          "name": "PresentationTimer_Comparison_onedir",
+          "id": 12069398730,
+          "size_in_bytes": 12025623,
+          "digest": "sha256:23374d637cdbce188135f64ff005136ef7f0bc309eb463f03e23e2906db4fdb9"
+        }
+      ],
+      "archive_digests_verified": true,
+      "payload_manifest_verified": true,
+      "onedir_file_count": 988,
+      "all_59_dll_pyd_pairs_byte_identical": true,
+      "ambient_runner_packages_present_in_pyz": [],
+      "python": "3.13.16",
+      "environment": {
+        "image_version": "20261012.333.1",
+        "runner_os": "Windows",
+        "python": "Python 3.13.16",
+        "mode": "onefile",
+        "runner_arch": "X64",
+        "pip": [
+          "pip 26.2.1 from D:\\a\\udc-presentation-timer\\udc-presentation-timer\\build\\work-onefile-367af9e2e2c74db596224e851318c81e\\venv\\Lib\\site-packages\\pip (python 3.13)",
+          ""
+        ],
+        "run_attempt": "1",
+        "run_id": "38955830019",
+        "image_os": "win22",
+        "dirty": [],
+        "flags": [
+          "--clean",
+          "--onefile",
+          "--windowed",
+          "--noupx"
+        ],
+        "commit": "30f897ad597fcec7b18f63a24d8d4d4e71969187"
+      },
+      "build_dependencies": [
+        "altgraph==0.17.5",
+        "packaging==26.3",
+        "pefile==2024.8.26",
+        "pip==26.2.1",
+        "pyinstaller==6.22.3",
+        "pyinstaller-hooks-contrib==2026.8",
+        "pywin32-ctypes==0.2.3",
+        "setuptools==84.0.0"
+      ],
+      "pyz_module_count": 119,
+      "source_hashes_verified_against_checkout_files": 6,
+      "windows_tests_per_mode": {
+        "passed": 6,
+        "skipped": 0,
+        "failed": 0
+      }
+    }
+  },
+  "across_runs": {
+    "different": [
+      "VCRUNTIME140.dll",
+      "_bz2.pyd",
+      "_ctypes.pyd",
+      "_decimal.pyd",
+      "_hashlib.pyd",
+      "_lzma.pyd",
+      "_socket.pyd",
+      "_tkinter.pyd",
+      "base_library.zip",
+      "libcrypto-3.dll",
+      "select.pyd",
+      "tcl86t.dll",
+      "tk86t.dll",
+      "unicodedata.pyd",
+      "zlib1.dll"
+    ],
+    "old_only": [
+      "python312.dll"
+    ],
+    "new_only": [
+      "python313.dll"
+    ],
+    "identical_count": 971
+  }
+}

@@ -16,6 +16,7 @@
 
 ## Windows EXE版（正式配布保留）
 - [x] GitHub Actionsでビルド、Windows実機で基本機能を確認
-- [ ] SmartScreen警告とウイルスバスター検出の原因を調査
+- [x] ソース静的監査とビルド証跡・安全な試験手順を作成（[監査報告](docs/security/WINDOWS_AUDIT.md)、[検証手順](docs/security/WINDOWS_VALIDATION.md)）
+- [ ] SmartScreen警告とウイルスバスター検出の原因を調査（ATC25475の意味と旧EXEの由来は未確定）
 - [ ] ソース・依存関係の安全性確認、ビルド方式の比較試験
 - [ ] 安全性を確認したうえでGitHub ReleasesにEXEを掲載
