@@ -37,7 +37,17 @@ ZIPダイジェスト、ファイルSHA-256、アプリ署名、ベンダーの�
 
 ## CIでのDefender可用性確認
 
-Windows CIに`scan_defender.ps1`を追加した。DefenderがNormalモードで有効な場合だけ、
+Windows CIの手動実行で`scan_defender=true`を指定すると`scan_defender.ps1`を実行する。
+通常PR/pushのビルドCIではこの工程はスキップされ、AV結果は得られない。
+実際のホストで署名更新がRPC失敗したため、標準ビルドの必須工程から分離した。
+失敗したrun 39014534327の記録は監査報告書に残し、スキャン完了とは扱わない。
+自分の対応Windows環境でも、ビルド後にリポジトリ直下で次を実行できる。
+
+```powershell
+./windows/scan_defender.ps1 -Payload dist/onedir -Evidence build/evidence/onedir
+```
+
+DefenderがNormalモードで有効な場合だけ、
 署名更新後に新候補フォルダを`MpCmdRun -Scan -ScanType 3 -File`でスキャンする。
 サービス・コマンドが利用できない場合は`not_run`として理由をmetadataの`defender-scan.json`へ保存し、
 **CI成功をAV未検出と解釈しない**。検出・エラー・結果不明は失敗として候補アップロードを止める。

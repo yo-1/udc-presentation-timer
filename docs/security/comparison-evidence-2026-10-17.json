@@ -12,6 +12,7 @@
         "sha256": "b50e329c8acf0b66b3b854d6677973a3711732f994b31a10d575bc317f8ee7bd",
         "sha1_identification_only": "5252802a2cd4811b094779a47d57a6063b7719a5",
         "machine": "0x8664",
+        "pe_timestamp": 1792177899,
         "subsystem": 2,
         "certificate_table_bytes": 0,
         "imports": [
@@ -27,6 +28,7 @@
         "sha256": "b3a8303a212782b7da79b58eed28148e556417268de510bb8cb7973ca6d85cdb",
         "sha1_identification_only": "7b4881a4e0d629b257db249b6f910f6c49730fb6",
         "machine": "0x8664",
+        "pe_timestamp": 1792177896,
         "subsystem": 2,
         "certificate_table_bytes": 0,
         "imports": [
@@ -118,6 +120,7 @@
         "sha256": "05b8bdab8428f161c74d12f82d902873b28e7b4b2724229ed767d10ffd8e59fc",
         "sha1_identification_only": "c207bcdc3ee2d5c1920822ed3eae663bc8109cad",
         "machine": "0x8664",
+        "pe_timestamp": 1792179270,
         "subsystem": 2,
         "certificate_table_bytes": 0,
         "imports": [
@@ -133,6 +136,7 @@
         "sha256": "bcfc26e228e7eb814ed9c7746f73aed68d6f32426311ac40aaa31da157b1abe5",
         "sha1_identification_only": "18ea923c80edf855e54d7bc3c13e2aeb5e2c68bf",
         "machine": "0x8664",
+        "pe_timestamp": 1792179259,
         "subsystem": 2,
         "certificate_table_bytes": 0,
         "imports": [

@@ -1,6 +1,11 @@
 name: Presentation Timer Windows security comparison
 on:
   workflow_dispatch:
+    inputs:
+      scan_defender:
+        description: 'Attempt Defender scan (requires a working Defender service)'
+        type: boolean
+        default: false
   pull_request:
     paths:
       - 'windows/**'
@@ -33,6 +38,7 @@ jobs:
         shell: pwsh
         run: ./windows/build_comparison.ps1 -Mode '${{ matrix.mode }}'
       - name: Scan new candidate if Defender is active (never execute payload)
+        if: github.event_name == 'workflow_dispatch' && inputs.scan_defender
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'

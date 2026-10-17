@@ -118,10 +118,15 @@ PyInstaller公式ソースの[再現性説明](https://github.com/pyinstaller/py
 [push CI 39014257877](https://github.com/yo-1/udc-presentation-timer/actions/runs/39014257877)は両方式とも成功し、
 PRログで各9テスト成功・skipなしを確認した。最新ZIPは保存先sa5/sa2で再度403となっており、
 設定効果の実物再比較は未完了。接続先の追加は環境設定ドラフトへ保存した。
-DefenderがCIランナーで利用可能か確認し、利用可能な場合だけ新候補をスキャンする工程も追加する。
-この工程の実行結果は後続CIで記録し、利用不可を未検出として扱わない。
+Defender工程を試した[PR CI 39014534327](https://github.com/yo-1/udc-presentation-timer/actions/runs/39014534327)では、
+両モードともビルド・9テスト・inventory照合は成功したが、`Update-MpSignature`が
+`The remote procedure call failed`で失敗。スキャン開始前の失敗であり、検出あり/なしの判定はできない。
+スクリプトは`failed_or_unknown`を保存し、候補EXEはアップロードせずmetadataだけ保存した。
+この失敗を成功に置き換えず、Defenderサービスが利用できる環境向けの任意手動実行
+（workflow_dispatchの`scan_defender=true`）に分離した。通常PR/pushのCIはAV検査を行わない。
+機能・ビルド検証の成功と、AV検査未完了を別々に報告する。
 Trend Micro公式ページは引き続き取得できず、ATCコードの解釈は未確定。
-通信ドラフトには新成果物の保存先`productionresultssa4.blob.core.windows.net`を追加保存した。
+通信ドラフトには実際にリダイレクトされた保存先sa4/sa5/sa2/sa9の各`productionresultssaN.blob.core.windows.net`を追加保存した。
 ドラフトの保存自体は実行設定の反映・公開を意味しない。実際の取得成功と設定状態は区別する。
 
 ## 検出原因と配布判定
