@@ -53,7 +53,7 @@ $PipVersion = & $script:Python -m pip --version
    python_hash_seed='0'; source_date_epoch=$BuildEpoch;
    flags=@('--clean', "--$Mode", '--windowed', '--noupx')
 } | ConvertTo-Json -Depth 4 | Set-Content -Encoding utf8 "$Evidence/environment.json"
-Get-FileHash windows/udc_timer.py, windows/requirements-build.txt, windows/build_comparison.ps1, windows/artifact_inventory.py, windows/compare_builds.py, assets/bell.mp3, .github/workflows/windows-build.yml -Algorithm SHA256 |
+Get-FileHash windows/udc_timer.py, windows/requirements-build.txt, windows/build_comparison.ps1, windows/artifact_inventory.py, windows/compare_builds.py, windows/scan_defender.ps1, assets/bell.mp3, .github/workflows/windows-build.yml -Algorithm SHA256 |
     Select-Object @{n='path';e={$_.Path.Substring($Repo.Length + 1)}}, Hash |
     ConvertTo-Json | Set-Content -Encoding utf8 "$Evidence/source-hashes.json"
 $BellAsset = Join-Path $Repo 'assets/bell.mp3'

@@ -114,7 +114,12 @@ Windows区切り、格納名の重複・不正パス、内容改変とZIP順序�
 既存6件と合わせた9テストがLinuxで成功。旧・新の実ファイルでもこのCLIを実行して結果を保存した。
 
 PyInstaller公式ソースの[再現性説明](https://github.com/pyinstaller/pyinstaller/blob/v6.22.3/doc/advanced-topics.rst)
-を確認し、ビルド時のハッシュseedとPE時刻を固定した。設定後のWindows CIは後続の検証で確認する。
+を確認し、ビルド時のハッシュseedとPE時刻を固定した。設定後の[PR CI 39014261348](https://github.com/yo-1/udc-presentation-timer/actions/runs/39014261348)と
+[push CI 39014257877](https://github.com/yo-1/udc-presentation-timer/actions/runs/39014257877)は両方式とも成功し、
+PRログで各9テスト成功・skipなしを確認した。最新ZIPは保存先sa5/sa2で再度403となっており、
+設定効果の実物再比較は未完了。接続先の追加は環境設定ドラフトへ保存した。
+DefenderがCIランナーで利用可能か確認し、利用可能な場合だけ新候補をスキャンする工程も追加する。
+この工程の実行結果は後続CIで記録し、利用不可を未検出として扱わない。
 Trend Micro公式ページは引き続き取得できず、ATCコードの解釈は未確定。
 通信ドラフトには新成果物の保存先`productionresultssa4.blob.core.windows.net`を追加保存した。
 ドラフトの保存自体は実行設定の反映・公開を意味しない。実際の取得成功と設定状態は区別する。

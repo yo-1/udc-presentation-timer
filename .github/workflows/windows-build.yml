@@ -32,6 +32,13 @@ jobs:
       - name: Build comparison and record evidence (never execute payload)
         shell: pwsh
         run: ./windows/build_comparison.ps1 -Mode '${{ matrix.mode }}'
+      - name: Scan new candidate if Defender is active (never execute payload)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          ./windows/scan_defender.ps1 -Payload 'dist/${{ matrix.mode }}' -Evidence 'build/evidence/${{ matrix.mode }}'
+          python windows/artifact_inventory.py verify 'dist/${{ matrix.mode }}' 'build/evidence/${{ matrix.mode }}/hashes.json'
+          if ($LASTEXITCODE -ne 0) { throw 'Payload changed after the scan; do not upload the candidate.' }
       - name: Upload metadata
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6, Node.js 24

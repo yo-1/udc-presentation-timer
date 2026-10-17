@@ -90,6 +90,7 @@ def pe_details(path):
         return {'bytes': len(data), 'sha256': sha256(data),
                 'sha1_identification_only': hashlib.sha1(data).hexdigest(),
                 'machine': hex(pe.FILE_HEADER.Machine),
+                'pe_timestamp': pe.FILE_HEADER.TimeDateStamp,
                 'subsystem': pe.OPTIONAL_HEADER.Subsystem,
                 'certificate_table_bytes': pe.OPTIONAL_HEADER.DATA_DIRECTORY[4].Size,
                 'imports': [entry.dll.decode('ascii')

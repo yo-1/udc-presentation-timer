@@ -35,6 +35,19 @@ ZIPダイジェスト、ファイルSHA-256、アプリ署名、ベンダーの�
 `base_library.zip`はZIP自体の差と、各メンバーの内容・メタデータ・格納順を分けて記録する。
 対象はダウンロード後のmanifest照合を済ませたファイルに限る。比較の成功はAV検査の代用ではない。
 
+## CIでのDefender可用性確認
+
+Windows CIに`scan_defender.ps1`を追加した。DefenderがNormalモードで有効な場合だけ、
+署名更新後に新候補フォルダを`MpCmdRun -Scan -ScanType 3 -File`でスキャンする。
+サービス・コマンドが利用できない場合は`not_run`として理由をmetadataの`defender-scan.json`へ保存し、
+**CI成功をAV未検出と解釈しない**。検出・エラー・結果不明は失敗として候補アップロードを止める。
+スキャン後にinventoryを再照合し、隔離等によるpayload変化も検出する。
+
+Microsoftの[公式戻り値仕様](https://learn.microsoft.com/en-us/defender-endpoint/command-line-arguments-microsoft-defender-antivirus)
+ではexit 0は「未検出」だけでなく「検出して修復済み」も含む。このためexit値に加えて検出記録と
+ファイル整合性を確認し、成功しても安全保証とは記録しない。`not_run`は実機での検査が必要。
+旧検出EXEをCIへ渡す工程はない。Defender設定変更・除外・検出回避はしない。
+
 ## 実機で必要な最小検証
 
 1. 検出ログの原本を保存し、ATC25475が「検出名」なのか管理用識別子なのか、fileHashの算法をTrend Microへ照会する。旧EXEの隔離は維持する。
