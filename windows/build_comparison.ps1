@@ -6,9 +6,22 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $Repo = Split-Path $PSScriptRoot -Parent
 Set-Location $Repo
+$BuildEpoch = & git show -s --format=%ct HEAD
+if ($LASTEXITCODE -ne 0 -or $BuildEpoch -notmatch '^\d+$') {
+    throw 'Cannot determine reproducible source timestamp'
+}
 function Invoke-Python {
-    & $script:Python @args
-    if ($LASTEXITCODE -ne 0) { throw "Python command failed ($LASTEXITCODE): $args" }
+    $PreviousHashSeed = $env:PYTHONHASHSEED
+    $PreviousSourceEpoch = $env:SOURCE_DATE_EPOCH
+    try {
+        $env:PYTHONHASHSEED = '0'
+        $env:SOURCE_DATE_EPOCH = $script:BuildEpoch
+        & $script:Python @args
+        if ($LASTEXITCODE -ne 0) { throw "Python command failed ($LASTEXITCODE): $args" }
+    } finally {
+        $env:PYTHONHASHSEED = $PreviousHashSeed
+        $env:SOURCE_DATE_EPOCH = $PreviousSourceEpoch
+    }
 }
 # Do not use ambient site-packages or silently change interpreter versions.
 Invoke-Python -c "import sys,struct; assert sys.platform == 'win32' and sys.version_info[:3] == (3,13,16) and struct.calcsize('P') == 8, 'Use CPython 3.13.16 Windows x64'"
@@ -37,9 +50,10 @@ $PipVersion = & $script:Python -m pip --version
    image_os=$env:ImageOS; image_version=$env:ImageVersion;
    runner_os=$env:RUNNER_OS; runner_arch=$env:RUNNER_ARCH;
    run_id=$env:GITHUB_RUN_ID; run_attempt=$env:GITHUB_RUN_ATTEMPT;
+   python_hash_seed='0'; source_date_epoch=$BuildEpoch;
    flags=@('--clean', "--$Mode", '--windowed', '--noupx')
 } | ConvertTo-Json -Depth 4 | Set-Content -Encoding utf8 "$Evidence/environment.json"
-Get-FileHash windows/udc_timer.py, windows/requirements-build.txt, windows/build_comparison.ps1, windows/artifact_inventory.py, assets/bell.mp3, .github/workflows/windows-build.yml -Algorithm SHA256 |
+Get-FileHash windows/udc_timer.py, windows/requirements-build.txt, windows/build_comparison.ps1, windows/artifact_inventory.py, windows/compare_builds.py, assets/bell.mp3, .github/workflows/windows-build.yml -Algorithm SHA256 |
     Select-Object @{n='path';e={$_.Path.Substring($Repo.Length + 1)}}, Hash |
     ConvertTo-Json | Set-Content -Encoding utf8 "$Evidence/source-hashes.json"
 $BellAsset = Join-Path $Repo 'assets/bell.mp3'

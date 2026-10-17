@@ -25,6 +25,16 @@ ZIPダイジェスト、ファイルSHA-256、アプリ署名、ベンダーの�
 `pyi-archive_viewer -l <EXE>`等の静的解析で確認し、DLL・Python・Tk/Tcl・MP3の版/ハッシュをonedirと比較する。
 バイナリ解析も更新済みの隔離解析環境で行い、EXE本体は起動しない。
 
+信頼済みビルドvenvのPython（PyInstallerとpefile導入済み）で、次の静的比較も行える。
+`<build-python>`は`build/work-<mode>-<id>/venv/Scripts/python.exe`を指定する。
+
+```powershell
+& '<build-python>' windows/compare_builds.py dist/onefile/PresentationTimer.exe dist/onedir/PresentationTimer --output build/static-comparison.json
+```
+
+`base_library.zip`はZIP自体の差と、各メンバーの内容・メタデータ・格納順を分けて記録する。
+対象はダウンロード後のmanifest照合を済ませたファイルに限る。比較の成功はAV検査の代用ではない。
+
 ## 実機で必要な最小検証
 
 1. 検出ログの原本を保存し、ATC25475が「検出名」なのか管理用識別子なのか、fileHashの算法をTrend Microへ照会する。旧EXEの隔離は維持する。
@@ -79,9 +89,10 @@ SmartScreen文言 / スクリーンショット / 検出ログ添付:
 
 - [ ] ATC25475の意味・hash算法と旧EXEの由来を製品サポートで確認する。
 - [ ] 旧EXEのSHA-256・署名・ビルド元・依存を、隔離解除や実行をせず入手可能な記録から確定する。
-- [ ] #5のEXE/同梱物/依存/ログを照合し、新しい固定ビルドとの差を記録する。
+- [x] #5とPR run 38955830019の全ZIP・EXE/同梱物/依存/ログを照合し、差を記録する。
 - [x] 新CI 38955554555の両モード成功と4成果物のAPI情報を確認する。
-- [ ] 新CIのログ本文、metadataの各項目・個別テスト件数・skip数とダウンロード後ハッシュを確認する。
+- [x] PR run 38955830019のログ本文、入力ハッシュ・依存・環境metadata、各6テスト成功/skipなしとダウンロード後ハッシュを確認する。
+- [ ] seed・PE時刻固定後のWindows CIを検証し、両方式の静的比較を再実行する。
 - [ ] Defender・ウイルスバスターの最新スキャンと新候補の実機試験を行う。
 - [ ] 直接実行時MP3パス、手動ベルOFF、Tkのスレッド操作、計時と再開の課題を別途修正・検証する。
 - [ ] 署名・再現性・素材再配布条件・依存ライセンス/通知の配布前確認を完了する。

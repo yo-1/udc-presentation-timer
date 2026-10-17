@@ -50,13 +50,14 @@ onedirへの変更やUPX無効化だけで誤検知と判断しない。
 ## ビルドの改善
 
 - `requirements-build.txt`をPyInstaller 6.22.3と推移依存を含む7パッケージの完全固定・wheel SHA-256検証に変更。
-- Windows x64のCPython 3.13.16を固定。公式actions/python-versionsのmanifestで提供を確認。3.12系列のWindows配布が3.12.10で止まっているため、単に古い3.12.10へ固定せず保守対象系列へ移した。旧ビルドとの差を調べる場合は、このランタイム変更と依存更新も変数として扱う。
+- Windows x64のCPython 3.13.16を固定。公式actions/python-versionsのmanifestで提供を確認。3.12系列のWindows配布が3.12.10で止まっているため、単に古い3.12.10へ固定せず保守対象系列へ移した。旧ビルドとの差を調べる場合は、ランタイム変更・隔離環境・依存固定化を区別する（取得後、7件の共通ビルド依存の版は旧新で同じと確認）。
 - 公式checkout/setup-python/upload-artifactのNode.js 24対応v6を取得時の完全コミットへ固定。タグの移動による差を防ぐ。
 - contents:readを維持し、checkoutの資格情報永続化を無効化。pull_request_targetやsecretsは使用しない。PR用CI、15分上限、欠落成果物のエラー化を追加。
 - CIとローカルで共通PowerShellスクリプトを使用。隔離venv、固定依存、pip check、テスト、`--noupx`、モード別出力を使用し、成果物は実行しない。
 - install report、pip inspect/freeze、Python/pip・runner image・コミット・dirty状態・入力ハッシュ・ビルド警告とxref・全同梱ファイルのサイズ/SHA-256/SHA-1を保存。
 - SHA-1は旧検出との識別補助のみ。整合性判定はSHA-256で行う。メタデータ自体の真正性も信頼できるGitHub実行とZIPダイジェストで確認する。
-- Windows runner image、OS、pipのvenv同梱版、圧縮・時刻・署名等まで固定しておらず、バイト単位の再現性を保証しない。imageとpip版は記録する。未署名であることも記録対象。
+- ビルド時の`PYTHONHASHSEED=0`と、コミット時刻に基づく`SOURCE_DATE_EPOCH`を追加。Python子プロセス終了後は元の値へ戻す。前者はZIP格納順の差、後者はPEビルド時刻の差を抑える。実行アプリの環境設定は変更しない。
+- Windows runner image、OS、pipのvenv同梱版、絶対パスや署名等まで固定しておらず、バイト単位の完全な再現性は保証しない。imageとpip版は記録する。
 
 [依存メタデータ](build-dependencies-2026-10-17.json)には公式PyPIのRequires-Dist、
 Requires-Python、選択wheelのSHA-256、取得時のvulnerabilitiesを記録した。
@@ -64,35 +65,59 @@ Requires-Python、選択wheelのSHA-256、取得時のvulnerabilitiesを記録�
 PyPIが返した該当版のvulnerabilitiesは全件空だったが、未知の脆弱性や別DBの見落としを否定しない。
 インストール済み旧依存と新ロックは区別して比較する。
 
-## 今回の検証結果と取得制限
+## 取得後の実物比較（2026年10月17日追記）
 
-改善コミット `b09ca6ab3357e0bef17b42e2341e3d906efa3a1e` の
-[Windows CI 38955554555](https://github.com/yo-1/udc-presentation-timer/actions/runs/38955554555)
-はonefile・onedirともsuccess。両ジョブでインストール、pip check、テスト、ビルド、
-全ファイルinventoryの作成・照合とアップロードが成功した。両check-runのannotationsは空で、
-旧実行にあったNode.js 20警告はこの実行では記録されていない。
-Linuxではinventoryの6テストが全件成功（skipなし）、既存の構造assertionも成功。
-Windowsログ本文をまだ取得できないため、Windows側の個別テスト件数・skip数は未確認。
+旧run #5 `38953010619`と、新PR run `38955830019`の各4ZIPおよびログ本文を取得した。
+全8ZIPについてGitHub APIのSHA-256を実測照合し、全payloadについて対応metadataの
+全ファイルハッシュと件数も照合した。新runでは両モードの6テストが全件成功、skipなしとログで確認した。
+初回の403による取得制限はこの2runについて解消しており、未取得という前回の状態は更新する。
 
-| 新成果物 | ZIPバイト数 | APIに記録されたZIP SHA-256 |
-| --- | ---: | --- |
-| Comparison_onefile | 11532326 | `c938675353a239c6d960fabb2c48b2d475c419dc59e10043fc032e80ee36506e` |
-| Comparison_onedir | 12026034 | `dbf1d80e0ad51d16eb55cfd5084aec939253b77493cf32fbda549d28bb04b43d` |
-| Metadata_onefile | 53746 | `e5b828462895e17da286592b4a0eceee609124654cab433e5476bebea9820d6f` |
-| Metadata_onedir | 126432 | `b75b324dfe0cc9b7248d9064892016d6382a63fa6a081cfca3c32af40575d63a` |
+新run APIのheadは`a97ecc8f12dd217a37a3e9ae83c3f07a55b05345`だが、
+PR用checkoutは合成マージコミット`30f897ad597fcec7b18f63a24d8d4d4e71969187`。
+metadataはこのcheckoutのSHAを正しく記録していた。入力6ファイルのハッシュを作業ブランチと照合した
+（Windows checkoutのCRLFも考慮）。APIのPR headとビルドしたcheckout SHAを混同しない。
 
-上記はAPIの記録確認であり、ダウンロードしたZIPの実測照合とは区別する。
-旧比較runのアーカイブ取得はリダイレクト先`productionresultssa15.blob.core.windows.net`、
-ログ取得は`results-receiver.actions.githubusercontent.com`への接続が403で止まった。
-GitHubの成功ステータスだけで、ログ本文・旧依存一覧・EXE個別ハッシュ・内包ファイルを確認したとは記さない。
-旧新の同梱物・依存の実物比較、旧EXEとのSHA-1/SHA-256照合、AV検査は未完了。
-APIで確認できるZIPサイズは上表と旧run表のとおりだが、ランタイムと依存も変わっているため、方式だけの影響は推定しない。
+| run | 方式 | EXEバイト数 | EXE SHA-256 |
+| --- | --- | ---: | --- |
+| 38953010619 | onefile | 11514780 | `b50e329c8acf0b66b3b854d6677973a3711732f994b31a10d575bc317f8ee7bd` |
+| 38953010619 | onedir | 1821680 | `b3a8303a212782b7da79b58eed28148e556417268de510bb8cb7973ca6d85cdb` |
+| 38955830019 | onefile | 11780175 | `05b8bdab8428f161c74d12f82d902873b28e7b4b2724229ed767d10ffd8e59fc` |
+| 38955830019 | onedir | 1929239 | `bcfc26e228e7eb814ed9c7746f73aed68d6f32426311ac40aaa31da157b1abe5` |
 
-GitHub API、成果物・ログ保存先、Microsoft/PyInstaller/Trend Micro公式資料のための
-接続先を環境設定のネットワークドラフトへ追加保存した。ドラフト保存は実行環境への反映・公開ではない。
-Trend Micro公式ページとPyInstaller公式サイトの閲覧も403で完了していない。
-接続設定の反映後に失敗した取得を再実行し、表の実測照合と残課題を更新する。
-新しい認証情報を追加する必要性は確認されていない。
+上表はEXE本体の実測値。ZIPダイジェスト・SHA-1・PE情報・詳細比較は
+[機械可読な検証記録](comparison-evidence-2026-10-17.json)に保存した。
+旧検出fileHashをSHA-1と仮定すれば4件とも一致しないが、製品側の算法は未確認であり、
+隔離された旧`UDC_Timer.exe`の同一性や安全性の結論には使わない。
+
+### 同じrun内のonefileとonedir
+
+- 両runともonedirは988ファイル（EXE 1件＋`_internal` 987件）。onefileのCArchiveは997件、onedir EXEのCArchiveは10件。
+- onefileの格納名のWindows区切りを正規化して比較。外部987件のうち986件がバイト一致し、差は`base_library.zip`だけだった。欠落・余分な格納物はなかった。
+- ZIPをさらに静的に解析すると、旧版155件・新版154件のメンバー内容とメタデータはそれぞれ両方式で一致し、格納順だけが異なった。バイトコードの差とは扱わない。
+- アプリ本体`udc_timer`を含む、両EXE内の共通10格納物もすべてバイト一致。外部59件のDLL/PYDとMP3も一致した。
+- 4EXEはPE x64 (`0x8664`) / GUI subsystem (`2`)。組み込みAuthenticode証明書テーブルは0バイト。Windows側の署名・評判確認は別途必要。
+- PEの静的importはUSER32、COMCTL32、KERNEL32、ADVAPI32、GDI32。これだけでPython経由の通信有無や安全性は判断できない。
+
+### 旧runと新run
+
+- 7件のビルド依存は版がすべて同じだった。旧freezeの追加7件（argcomplete、click、colorama、filelock、pipx、platformdirs、userpath）はランナーの共存パッケージで、新しい隔離venvには含まれない。両runのPYZモジュール名にもこれらはなかった。
+- 新freezeは`--all`によりpip 26.2.1も記録するため、旧freezeと単純な行数比較をしない。PYZのモジュール数は112→119。socket/subprocess/urllib等の標準モジュールも含まれるが、同梱だけで実行や通信の証拠とは扱わない。
+- `_internal`の同一パス971件がバイト一致、15件が変化し、python312.dllがpython313.dllへ置換された。変化したファイルの一覧はJSONに保存した。
+- PEの版情報はPython 3.12.10→3.13.16、OpenSSL 3.0.16→3.5.9、VC runtime 14.42.34438.0→14.51.36247.0。Tcl/Tkは両方8.6.15、zlibは両方1.3.1。版情報が同じでもTcl/Tk・zlibのバイナリハッシュは異なった。
+- 新runのrunner imageは`20261012.333.1`。素材MP3はリポジトリおよび全候補と一致。Python同梱のネイティブライブラリはpip依存の脆弱性照会だけでは評価できず、AV検査と別の版・脆弱性確認が必要。
+
+### 再現性と再利用可能な検証
+
+`windows/compare_builds.py`は信頼済みPyInstaller/pefileでCArchive・PEを静的に読み、
+両方式の格納物とZIPメンバーを比較する。payloadをimport/実行しない。
+Windows区切り、格納名の重複・不正パス、内容改変とZIP順序差の区別を検証する3テストを追加し、
+既存6件と合わせた9テストがLinuxで成功。旧・新の実ファイルでもこのCLIを実行して結果を保存した。
+
+PyInstaller公式ソースの[再現性説明](https://github.com/pyinstaller/pyinstaller/blob/v6.22.3/doc/advanced-topics.rst)
+を確認し、ビルド時のハッシュseedとPE時刻を固定した。設定後のWindows CIは後続の検証で確認する。
+Trend Micro公式ページは引き続き取得できず、ATCコードの解釈は未確定。
+通信ドラフトには新成果物の保存先`productionresultssa4.blob.core.windows.net`を追加保存した。
+ドラフトの保存自体は実行設定の反映・公開を意味しない。実際の取得成功と設定状態は区別する。
 
 ## 検出原因と配布判定
 
