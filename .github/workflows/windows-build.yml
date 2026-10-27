@@ -1,8 +1,19 @@
 name: Presentation Timer Windows security comparison
 on:
   workflow_dispatch:
+    inputs:
+      scan_defender:
+        description: 'Attempt Defender scan (requires a working Defender service)'
+        type: boolean
+        default: false
+  pull_request:
+    paths:
+      - 'windows/**'
+      - 'tests/**'
+      - '.github/workflows/windows-build.yml'
   push:
-    tags: ["v*"]
+    tags: ['v*']
+    branches: ['audit/windows-security']
 
 permissions:
   contents: read
@@ -10,42 +21,42 @@ permissions:
 jobs:
   exe:
     runs-on: windows-2022
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
         mode: [onefile, onedir]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6, Node.js 24
         with:
-          python-version: "3.12"
-      - name: Record build environment
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6, Node.js 24
+        with:
+          python-version: '3.13.16'
+          architecture: 'x64'
+      - name: Build comparison and record evidence (never execute payload)
+        shell: pwsh
+        run: ./windows/build_comparison.ps1 -Mode '${{ matrix.mode }}'
+      - name: Scan new candidate if Defender is active (never execute payload)
+        if: github.event_name == 'workflow_dispatch' && inputs.scan_defender
         shell: pwsh
         run: |
-          python --version
-          python -m pip --version
-          python -m pip install -r windows/requirements-build.txt
-          python -m pip freeze | Tee-Object -FilePath build-dependencies-${{ matrix.mode }}.txt
-      - name: Build comparison artifact
-        shell: pwsh
-        run: |
-          python -m PyInstaller --noconfirm --clean --${{ matrix.mode }} --windowed --name PresentationTimer --add-data "assets/bell.mp3;assets" windows/udc_timer.py
-      - name: Record hashes
-        shell: pwsh
-        run: |
-          Get-ChildItem dist -Recurse -File | ForEach-Object {
-            "$( (Get-FileHash -Algorithm SHA256 $_.FullName).Hash )  $( $_.FullName.Substring((Get-Location).Path.Length + 1) )"
-          } | Set-Content -Encoding utf8 hashes-${{ matrix.mode }}.txt
+          $ErrorActionPreference = 'Stop'
+          ./windows/scan_defender.ps1 -Payload 'dist/${{ matrix.mode }}' -Evidence 'build/evidence/${{ matrix.mode }}'
+          python windows/artifact_inventory.py verify 'dist/${{ matrix.mode }}' 'build/evidence/${{ matrix.mode }}/hashes.json'
+          if ($LASTEXITCODE -ne 0) { throw 'Payload changed after the scan; do not upload the candidate.' }
       - name: Upload metadata
-        uses: actions/upload-artifact@v4
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6, Node.js 24
         with:
           name: PresentationTimer_Metadata_${{ matrix.mode }}
-          path: |
-            build-dependencies-${{ matrix.mode }}.txt
-            hashes-${{ matrix.mode }}.txt
+          path: build/evidence/${{ matrix.mode }}/
+          if-no-files-found: error
+          retention-days: 30
       - name: Upload comparison build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6, Node.js 24
         with:
           name: PresentationTimer_Comparison_${{ matrix.mode }}
-          path: dist/
+          path: dist/${{ matrix.mode }}/
+          if-no-files-found: error
           retention-days: 7
